@@ -1,5 +1,5 @@
 <template>
-  <AppHeader :cartItems="cartItems"/>
+  <AppHeader :cartItems="cartItems" @delete-item="emitDeleteItem"/>
   <ProductDetail @increase-by="emitAddCartItems"/>
 </template>
 
@@ -8,8 +8,13 @@ const cartItems = ref<number[]>([0, 0, 0])
 
 function emitAddCartItems(id: number, quantity: number){
   cartItems.value[id] += quantity;
-  console.log(cartItems.value)
 }
+
+function emitDeleteItem(id:number){
+  cartItems.value[id] = 0;
+  console.log(cartItems.value[id])
+}
+
 </script>
 
 <style scoped>
