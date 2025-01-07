@@ -14,8 +14,10 @@
     "@nuxt/devtools": "latest",
     "@nuxt/fonts": "^0.10.2",
     "@nuxt/ui": "^2.19.2",
+    "@vue/runtime-dom": "^3.5.13",
     "icons": "^1.0.0",
     "nuxt": "^3.14.159",
-    "nuxt-icons": "^3.2.1"
+    "nuxt-icons": "^3.2.1",
+    "vue-tsc": "^2.1.10"
   }
 }
