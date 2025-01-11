@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center font-Kumbh-Sans -mt-14">
+  <div class="hidden min-h-screen sm:flex sm:items-center sm:justify-center font-Kumbh-Sans -mt-20 ">
     <div class="imageContainer mx-auto">
       <!-- Main image -->
       <div class="container mx-auto" @click="openCarousel()">
