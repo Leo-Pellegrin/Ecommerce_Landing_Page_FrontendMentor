@@ -6,34 +6,41 @@ import { useDeviceStore } from '~/stores/device';
 const deviceStore = useDeviceStore();
 
 onMounted(() => {
-  // Mettre à jour le store lors du redimensionnement
-  window.addEventListener('resize', deviceStore.updateDevice);
+  // Mettre à jour le store lors du redimensionnement, vérifier si on est dans le navigateur
+  if (typeof window !== 'undefined') {
+    window.addEventListener('resize', deviceStore.updateDevice);
+    deviceStore.updateDevice(); // Mettre à jour la taille au montage
+  }
 });
 
-const cartItems = ref<number[]>([0, 0, 0])
+onBeforeUnmount(() => {
+  // Supprimer l'événement de resize lorsque le composant est détruit
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('resize', deviceStore.updateDevice);
+  }
+});
+
+const cartItems = ref<number[]>([0, 0, 0]);
 
 function emitAddCartItems(id: number, quantity: number) {
+  console.log("add to cart", quantity)
   cartItems.value[id] += quantity;
 }
 
 function emitDeleteItem(id: number) {
   cartItems.value[id] = 0;
-  console.log(cartItems.value[id])
+  console.log(cartItems.value[id]);
 }
 </script>
 
 <template>
-  <AppHeader :cartItems="cartItems" @delete-item="emitDeleteItem" />
+  <AppHeader :isMobile="deviceStore.isMobile" :cartItems="cartItems" @delete-item="emitDeleteItem" />
 
-  <Suspense>
-    <template #default>
-      
-       <ProductDetailMobile v-if="deviceStore.isMobile" @increase-by="emitAddCartItems"/>
-      <ProductDetailDesktop v-else @increase-by="emitAddCartItems"/>
+  <div >
+    <ProductDetailMobile v-if="deviceStore.isMobile" @increase-by="emitAddCartItems"/>
+    <ProductDetailDesktop v-else @increase-by="emitAddCartItems" class="mt-36"/>
+  </div>
 
-    </template>
-    <template #fallback>
-      <div>Chargement...</div>
-    </template>
-  </Suspense>
+
+
 </template>

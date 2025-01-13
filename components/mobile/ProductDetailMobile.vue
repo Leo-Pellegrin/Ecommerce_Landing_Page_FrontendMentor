@@ -1,76 +1,38 @@
 <template>
-  <div class="hidden min-h-screen sm:flex sm:items-center sm:justify-center font-Kumbh-Sans -mt-20 ">
-    <div class="imageContainer mx-auto">
-      <!-- Main image -->
-      <div class="container mx-auto" @click="openCarousel()">
-        <img :src="imageSelected" class="w-full max-w-[450px] mx-auto rounded-[18px]" draggable="false">
+  <div class="flex flex-col justify-center font-Kumbh-Sans ">
+    <!-- Carousel -->
+    <UCarousel :items="productthumbnails"
+      :prev-button="{ icon: 'i-heroicons-chevron-left-solid', class: 'custom-arrow-button custom-icon-size start-7', size: 'lg' }"
+      :next-button="{ icon: 'i-heroicons-chevron-right-solid', class: 'custom-arrow-button end-7', size: 'lg' }" arrows>
+      <template #default="{ item }">
+        <div class="max-h-[340px]">
+          <img :src="item.image" draggable="false" class="w-full h-full object-cover overflow-hidden
+           transform origin-top 
+           scale-125" />
+        </div>
+      </template>
+    </UCarousel>
+
+    <!-- Description -->
+    <div class="informationcard max-w-[500px] mt-6 mx-4">
+      <div class="text-xs subtitle font-semibold mb-2">
+        SNEAKER COMPANY
       </div>
-
-      <UModal v-model="isCarouselOpen">
-        <div class="flex items-center justify-end">
-          <UButton color="white" variant="ghost" icon="i-heroicons-x-mark-solid" size="xl"
-            class="mb-3 -mr-2 hover:bg-transparent dark:hover:bg-transparentr modal-button-close"
-            @click="isCarouselOpen = false" />
-        </div>
-        <div>
-          <UCarousel :items="productthumbnails" :ui="{
-            indicators: {
-              wrapper: 'relative bottom-0 mt-4'
-            }
-          }"
-            :prev-button="{ icon: 'i-heroicons-chevron-left-solid', class: 'custom-arrow-button custom-icon-size -start-7', size: 'xl' }"
-            :next-button="{ icon: 'i-heroicons-chevron-right-solid', class: 'custom-arrow-button -end-7', size: 'xl' }"
-            arrows indicators>
-            <template #default="{ item }">
-              <img :src="item.image" draggable="false" class="max-w-[515px] rounded-2xl" />
-            </template>
-
-            <!-- Template pour les indicateurs (miniatures) -->
-            <template #indicator="{ onClick, page, active }">
-              <div class="mt-4 bg-white rounded-[20px]" :class="{
-                'relative': true,
-                'border-4 border-orange-500': active
-              }">
-                <img :src="productthumbnails[page - 1].path" :class="{
-                  'max-w-[100px] rounded-[16px] min-w-6 justify-center': true,
-                  'opacity-50': active   // Opacité réduite pour l'image inactif
-                }" @click="onClick(page)" class="cursor-pointer hover:opacity-50 transition-opacity" />
-
-              </div>
-            </template>
-          </UCarousel>
-        </div>
-      </UModal>
-      <!-- Subimages -->
-      <div class="grid grid-cols-4 mt-8 gap-4">
-        <div v-for="(thumbnail, index) in productthumbnails" :key="index" class="mx-auto flex-none max-w-[95px]">
-          <img :src="thumbnail.path" class="w-full rounded-[16px]"
-            :class="{ 'border-4 border-orange-500 opacity-50': thumbnail.selected }" @click="imageSelection(index)" />
-        </div>
+      <div class="text-2xl font-bold maintitle">
+        Fall Limited Edition <br> Sneakers
+      </div>
+      <div class="mt-2 description">
+        These low profile sneakers are your perfect casual wear companion. Featuring a durable rubber outer sole,
+        they'll withstand everything the weather can offer.
       </div>
     </div>
-
-
-
-    <div class="mx-auto">
-      <!-- Title and description -->
-      <div class="informationcard max-w-[500px]">
-        <div class="text-sm subtitle font-semibold mb-4">
-          SNEAKER COMPANY
-        </div>
-        <div class="text-5xl font-bold maintitle">
-          Fall Limited Edition Sneakers
-        </div>
-        <div class="text-md description mt-9">
-          These low profile sneakers are your perfect casual wear companion. Featuring a durable rubber outer sole,
-          they'll withstand everything the weather can offer.
-        </div>
-      </div>
-      <!-- Payement card -->
-      <div class="payementcard mt-6">
-        <!-- Price card -->
-        <div class="actualprice flex items-center">
-          <div class="text-4xl font-bold">
+    <!-- Price info -->
+    <div class="payementcard mt-6 mx-4">
+      <!-- Price card -->
+      <div class="actualprice flex items-center justify-between w-full">
+        <!-- Bloc de gauche : prix actuel et pourcentage -->
+        <div class="flex items-center">
+          <div class="text-3xl font-bold">
             ${{ actualprice }}.00
           </div>
           <div class="pourcentage text-md py-0.5 px-2 rounded ml-5">
@@ -78,32 +40,37 @@
           </div>
         </div>
 
-        <div class="price line-through subtitle mt-4 text-md">
+        <!-- Bloc de droite : prix barré -->
+        <div class="price line-through subtitle text-md flex items-center">
           ${{ price }}.00
-        </div>
-        <!-- Buy button -->
-        <div class="grid grid-cols-7 gap-2 mt-6 mr-16">
-          <div class="col-span-3 flex justify-center items-center quantity py-3 rounded-md">
-            <div class="mx-5" @click="setQuantity(-1)">
-              <img src="/assets/icons/icon-minus.svg">
-            </div>
-            <div class="mx-5">
-              {{ quantity }}
-            </div>
-            <div class="mx-5" @click="setQuantity(1)">
-              <img src="/assets/icons/icon-plus.svg">
-            </div>
-          </div>
-          <div class="col-span-4 flex justify-center items-center py-3 rounded-md cartcard">
-            <UButton class="flex items-center" variant="ghost" @click="$emit('increaseBy', 1, quantity)">
-              <img src="/assets/icons/icon-cart.svg" class="icon-cart mr-4">
-              Add to cart
-            </UButton>
-          </div>
         </div>
       </div>
 
+
+      <!-- Buy button -->
+      <div class="flex flex-col mt-6">
+        <!-- Quantity button -->
+        <div class="flex justify-around items-center quantity py-3 rounded-md mb-4">
+          <div class="mx-5" @click="setQuantity(-1)">
+            <img src="/assets/icons/icon-minus.svg">
+          </div>
+          <div class="mx-5">
+            {{ quantity }}
+          </div>
+          <div class="mx-5" @click="setQuantity(1)">
+            <img src="/assets/icons/icon-plus.svg">
+          </div>
+        </div>
+        <!-- Add to Cart Button -->
+        <div class="flex justify-center items-center py-3 rounded-md cartcard mb-4">
+          <UButton class="flex items-center" variant="ghost" @click="$emit('increaseBy', 1, quantity)">
+            <img src="/assets/icons/icon-cart.svg" class="icon-cart mr-4">
+            Add to cart
+          </UButton>
+        </div>
+      </div>
     </div>
+
   </div>
 </template>
 
@@ -153,31 +120,6 @@ const productthumbnails = ref([
     selected: false
   }
 ])
-
-function imageSelection(index: number) {
-  productthumbnails.value.forEach((p: any) => p.selected = false)
-  productthumbnails.value[index].selected = !productthumbnails.value[index].selected;
-  imageSelected.value = productimages.value[index]
-}
-
-function openCarousel() {
-  isCarouselOpen.value = true
-}
-
-function selectThumbnail(index: any) {
-  console.log()
-  // productthumbnails.value.forEach((thumbnail: any, i: any) => {
-  //   thumbnail.selected = i === index; // L'élément sélectionné devient "true", les autres sont "false"
-  // });
-}
-
-onMounted(() => {
-  imageSelected.value = productimages.value[0]
-})
-
-function thumbnail(value: { path: string; selected: boolean; }, index: number, array: { path: string; selected: boolean; }[]): unknown {
-  throw new Error('Function not implemented.');
-}
 
 function setQuantity(operation: number) {
   if (quantity.value > 0 && operation === -1) {
@@ -230,17 +172,12 @@ function setQuantity(operation: number) {
   width: 17px;
 }
 
-.nuxt-icon svg {
-  width: 0em;
-  height: 0em;
-}
-
 .custom-arrow-button {
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
-  border-radius: 50%;
+  border-radius: none;
   padding: 10px;
   transition: all 0.3s ease;
   background-color: white;
@@ -248,16 +185,16 @@ function setQuantity(operation: number) {
   width: 50px;
   height: 50px;
   font-size: 40px;
-  top: 255px;
+  top: 180px;
 }
 
-.custom-arrow-button:hover,
-.modal-button-close:hover {
+.custom-arrow-button:disabled {
+  color: gray;
+  background-color: white;
+}
+
+.custom-arrow-button:hover {
   color: hsl(26, 100%, 55%);
 }
 
-[id^="headlessui-dialog-panel-v"] {
-  background: transparent !important;
-  box-shadow: none !important;
-}
 </style>

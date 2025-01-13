@@ -1,13 +1,14 @@
-// stores/device.ts
 import { defineStore } from 'pinia';
 
 export const useDeviceStore = defineStore('device', {
   state: () => ({
-    isMobile: window.innerWidth <= 400, // Initialisation
+    isMobile: false, // Initialisation à `false`, car on ne sait pas encore si c'est mobile
   }),
   actions: {
     updateDevice() {
-      this.isMobile = window.innerWidth <= 400;
+      if (typeof window !== 'undefined') {
+        this.isMobile = window.innerWidth <= 400;
+      }
     },
   },
 });

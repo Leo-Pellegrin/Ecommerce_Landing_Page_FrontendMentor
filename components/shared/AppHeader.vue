@@ -4,7 +4,12 @@ const isCartModalOpen = ref(false);
 const isMobileMenuOpen = ref(false);
 const modalPositionStyle = ref({});
 
+
 const props = defineProps({
+  isMobile: {
+    type: Boolean,
+    required: true
+  },
   cartItems: {
     type: Array as PropType<number[]>,
     required: true,
@@ -70,49 +75,58 @@ function openCartModal(event: any) {
   // Coordonnées initiales basées sur le bouton
   let left = buttonRect.left;
   let top = buttonRect.bottom;
-
-  let margin = 16
+  const margin = 16;
 
   // Dimensions estimées de la modal
-  const modalWidth = 400; // Ajustez en fonction de la taille réelle de votre modal
-  const modalHeight = 300; // Ajustez en fonction de la taille réelle de votre modal
+  let modalWidth;
+  let modalHeight;
 
-  // Annuler le centrage en flexbox
-  left = viewportWidth / 2 - buttonRect.width / 2 - (modalWidth / 2) + margin;
-
-  top = -(viewportHeight / 2) + top + margin;
-
-  // Ajuster pour éviter les débordements horizontaux
-  if (left + modalWidth > viewportWidth) {
-    left = viewportWidth - modalWidth - 16; // Marge de 16px
-  }
-
-  // Ajuster pour éviter les débordements verticaux
-  if (top + modalHeight > viewportHeight) {
-    top = viewportHeight - modalHeight - 16; // Marge de 16px
-  }
-
-  modalPositionStyle.value = {
-    top: `${top}px`,
-    left: `${left}px`,
-    position: 'absolute !important',
-    transform: 'translate(0, 0) !important', // Annuler tout centrage flex
-  };
-
-  isCartModalOpen.value = !isCartModalOpen.value;
-}
-
-function getModalSize() {
-  const modal = document.querySelector('#headlessui-dialog-panel-v-') as HTMLElement;
-  if (modal) {
-    return {
-      width: modal.offsetWidth,
-      height: modal.offsetHeight,
+  // ---------------------------------------
+  // Cas MOBILE : position simplifiée
+  // ---------------------------------------
+  if (props.isMobile) {
+    // La modal prend toute la largeur, collée en haut
+    modalPositionStyle.value = {
+      top: '90px',
+      left: '0px',
+      width: '96%',
+      position: 'fixed',
+      transform: 'none',      // Aucun décalage
+      // overflow: 'auto',    // <-- Ajoute si tu veux autoriser le scroll interne
+      // background: 'white'  // <-- Au besoin, pour rendre le fond de la modal visible
+      zIndex: '9999'          // Optionnel : être sûr que la modal est au-dessus
     };
   }
-  return { width: 300, height: 400 }; // Valeurs par défaut
-}
 
+  else {
+    modalWidth = 400;
+    modalHeight = 300;
+    // Annuler le centrage en flexbox
+    left = viewportWidth / 2 - buttonRect.width / 2 - (modalWidth / 2) + margin;
+    top = -(viewportHeight / 2) + top + margin;
+
+    // Ajuster pour éviter les débordements horizontaux
+    if (left + modalWidth > viewportWidth) {
+      left = viewportWidth - modalWidth - margin;
+    }
+
+    // Ajuster pour éviter les débordements verticaux
+    if (top + modalHeight > viewportHeight) {
+      top = viewportHeight - modalHeight - margin;
+    }
+
+    modalPositionStyle.value = {
+      top: `${top}px`,
+      left: `${left}px`,
+      position: 'absolute !important',
+      transform: 'translate(0, 0) !important',
+      margin: '0!important'
+    };
+  }
+
+  // Ouvrir / fermer la modal
+  isCartModalOpen.value = !isCartModalOpen.value;
+}
 </script>
 
 <template>
@@ -121,7 +135,7 @@ function getModalSize() {
       <!-- Menu pour mobile -->
       <UButton icon="i-heroicons-bars-3-20-solid" variant="ghost" @click="isMobileMenuOpen = true"
         class="my-auto mr-2 sm:hidden" />
-      <USlideover v-model="isMobileMenuOpen" side="left">
+      <USlideover v-model="isMobileMenuOpen" side="left" :overlay="false">
         <UCard class="flex flex-col flex-1 max-w-[250px] rounded-none"
           :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
           <div class="flex justify-start items-center ">
@@ -129,9 +143,7 @@ function getModalSize() {
               @click="isMobileMenuOpen = false" />
           </div>
           <div class="flex flex-col mt-8">
-            <UButton v-for="(link, index) in links" :key="index"
-              class="border-none"
-              variant="ghost">
+            <UButton v-for="(link, index) in links" :key="index" class="border-none" variant="ghost">
               <span class="text-lg font-bold mx-2 text-gray-900 dark:text-gray-400">{{ link.label }}</span>
             </UButton>
 
@@ -173,11 +185,11 @@ function getModalSize() {
 
         <UModal v-model="isCartModalOpen" class="mt-2 border-none" :overlay="false">
           <UCard :style="modalPositionStyle"
-            class="dark:text-black dark:bg-white border-none custom-modal min-w-[400px] drop-shadow-2xl rounded-b-lg"
+            class="dark:text-black dark:bg-white border-none custom-modal max-w-[400px] drop-shadow-2xl rounded-lg mx-2 md:m-0 md:rounded-b-lg "
             :ui="{ rounded: 'rounded-none', ring: 'ring-0' }">
             <template #header>
               <div class="flex justify-start">
-                <span class="text-md font-bold mb-5">Cart</span>
+                <span class="text-md font-bold mb-3 md:mb-5">Cart</span>
               </div>
               <UDivider :ui="{
                 border: {
@@ -214,6 +226,7 @@ function getModalSize() {
               </div>
             </template>
           </UCard>
+          ·
         </UModal>
 
         <UButton variant="ghost">
@@ -260,15 +273,6 @@ function getModalSize() {
   text-underline-offset: 3.4em;
 }
 
-.custom-modal {
-  position: absolute !important;
-  /* Priorité absolue pour écraser le centrage flex */
-  margin: 0 !important;
-  /* Annule les marges automatiques */
-  transform: translate(0, 0) !important;
-  /* Neutralise tout centrage */
-}
-
 .chiptext * {
   color: white !important;
 }
@@ -281,8 +285,7 @@ function getModalSize() {
   background-color: #FA7E1D;
 }
 
-
-@media (min-width: 375px) {
+@media (max-width: 400px) {
   .header {
     justify-content: start;
   }

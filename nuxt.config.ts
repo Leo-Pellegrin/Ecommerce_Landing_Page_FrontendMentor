@@ -5,12 +5,28 @@ export default defineNuxtConfig({
     "@nuxt/content",
     "@nuxt/fonts",
     "nuxt-icons",
-    "@pinia/nuxt"
+    "@pinia/nuxt",
+    '@nuxtjs/tailwindcss',
+    '@nuxtjs/color-mode'
   ],
   compatibilityDate: "2024-11-25",
   colorMode: {
-    preference: 'light'
+    preference: 'light', 
+    fallback: 'light', 
+    classSuffix: ''
   },
+
+  components: [
+    { path: '~/components', pathPrefix: false },
+    { path: '~/components/mobile' },
+    { path: '~/components/desktop' },
+  ],
+  tailwindcss: {
+    configPath: '~/tailwind.config.js' // Ajoute cette ligne pour spécifier le chemin du fichier de config
+  },
+  css: [
+    '~/assets/css/tailwind.css', // Assure-toi que ce fichier existe
+  ],
   fonts: {
     families: [
       {
