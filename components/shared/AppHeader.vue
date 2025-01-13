@@ -122,7 +122,7 @@ function getModalSize() {
       <UButton icon="i-heroicons-bars-3-20-solid" variant="ghost" @click="isMobileMenuOpen = true"
         class="my-auto mr-2 sm:hidden" />
       <USlideover v-model="isMobileMenuOpen" side="left">
-        <UCard class="flex flex-col flex-1 max-w-[260px]"
+        <UCard class="flex flex-col flex-1 max-w-[250px] rounded-none"
           :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
           <div class="flex justify-start items-center ">
             <UButton color="black" variant="ghost" size="sm" icon="i-heroicons-x-mark-20-solid" square
@@ -132,7 +132,7 @@ function getModalSize() {
             <UButton v-for="(link, index) in links" :key="index"
               class="border-none"
               variant="ghost">
-              <span class="text-base mx-2 text-gray-500 dark:text-gray-400">{{ link.label }}</span>
+              <span class="text-lg font-bold mx-2 text-gray-900 dark:text-gray-400">{{ link.label }}</span>
             </UButton>
 
           </div>

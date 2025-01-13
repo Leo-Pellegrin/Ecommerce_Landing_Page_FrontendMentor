@@ -95,7 +95,7 @@
             </div>
           </div>
           <div class="col-span-4 flex justify-center items-center py-3 rounded-md cartcard">
-            <UButton class="flex items-center" variant="ghost" @click="$emit('increaseBy', 1, quantity)"> 
+            <UButton class="flex items-center" variant="ghost" @click="$emit('increaseBy', 1, quantity)">
               <img src="/assets/icons/icon-cart.svg" class="icon-cart mr-4">
               Add to cart
             </UButton>
